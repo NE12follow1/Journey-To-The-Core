@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter as tk                #Used primarily for getting the width and height of the screen
 
 root = tk.Tk()
 
