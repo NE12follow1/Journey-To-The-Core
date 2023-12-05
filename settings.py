@@ -1,6 +1,6 @@
-import tkinter
+import tkinter as tk
 
-root = tkinter.TK()
+root = tk.Tk()
 
 width = root.winfo_screenwidth()
 height = root.winfo_screenheight()
