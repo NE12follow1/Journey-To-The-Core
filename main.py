@@ -1,6 +1,6 @@
 import pygame               #Used for displaying the game
 import random               #Used for anything that requires randomness
-from settings import *      #A separate python file that holds the 
+from settings import *      #A separate python file that holds many constants to do with pygame
 
 #Initialises the pygame library
 pygame.init()
