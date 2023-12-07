@@ -14,3 +14,5 @@ while True:
             pygame.quit()
 
     screen.fill((0,0,0))
+
+    pygame.clock.tick(fps)
