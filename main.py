@@ -139,6 +139,7 @@ class Armour:
 pygame.init()
 
 screen = pygame.display.set_mode((0,0),FULLSCREEN)
+pygame.display.set_caption("Journey To The Core")
 
 while True:
 
