@@ -5,7 +5,7 @@ from settings import *      #A separate python file that holds many constants to
 #Initialises the pygame library
 pygame.init()
 
-screen = pygame.display.set_mode([0,0],FULLSCREEN)
+screen = pygame.display.set_mode((0,0),FULLSCREEN)
 
 while True:
 
