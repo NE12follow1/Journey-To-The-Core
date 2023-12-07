@@ -137,15 +137,21 @@ class Armour:
 
 #Initialises the pygame library
 pygame.init()
+clock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((0,0),FULLSCREEN)
+screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
 pygame.display.set_caption("Journey To The Core")
 
 while True:
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+
+    screen.fill((0,0,0))
+
+    clock.tick(fps)
 
     screen.fill((0,0,0))
 
