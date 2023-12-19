@@ -22,6 +22,7 @@ while True:
 
     #Fills in the screen with black 
     screen.fill((0,0,0))
+    pygame.display.flip()
 
     #Used to set the game to the fps found in the settings file
     clock.tick(fps)
