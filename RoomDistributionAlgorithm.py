@@ -6,8 +6,10 @@ def NewFloor(floorSize = "large"):
     entranceRoom = [4,4]
     entranceRoomObject = Room("1111")
 
-    #Handles the 3 different floor sizes and what each means to the total number of rooms
-    if floorSize.lower() == "small":
+    #Handles the 4 different floor sizes and what each means to the total number of rooms
+    if floorSize.lower() == "extrasmall":
+        totalRooms = 10
+    elif floorSize.lower() == "small":
         totalRooms = 15
     elif floorSize.lower() == "medium":
         totalRooms = 20
@@ -234,4 +236,18 @@ def NewFloor(floorSize = "large"):
     #Returns the finished 2D array of the floor layout and room objects
     return currentFloorLayout
     
-currentFloorLayout = NewFloor("large")
+currentFloorLayout = NewFloor("Large")
+
+graphicalFloorLayout = currentFloorLayout
+
+for x in range (9):
+    line = ""
+    for y in range (9):
+        if graphicalFloorLayout[x][y] == 1:
+            graphicalFloorLayout[x][y] = "X"
+        elif graphicalFloorLayout[x][y] == 0:
+            graphicalFloorLayout[x][y] = "O"
+        else:
+            graphicalFloorLayout[x][y] = "+"
+        line += graphicalFloorLayout[x][y] + " "
+    print(line)
