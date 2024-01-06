@@ -42,12 +42,12 @@ def NewFloor(floorSize = "large"):
         exitRoom = [1,4]
         exitRoomObject = Room("0100")
 
-    print(exitRoom)
-    print(exitRoomObject.roomID)
-    print(exitRoomObject.northConnection)
-    print(exitRoomObject.eastConnection)
-    print(exitRoomObject.southConnection)
-    print(exitRoomObject.westConnection)
+    ##print(exitRoom)
+    ##print(exitRoomObject.roomID)
+    ##print(exitRoomObject.northConnection)
+    ##print(exitRoomObject.eastConnection)
+    ##print(exitRoomObject.southConnection)
+    ##print(exitRoomObject.westConnection)
 
     #Creates the 2D array that the floor layout and all the room objects will be stored inside
     currentFloorLayout = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]]
