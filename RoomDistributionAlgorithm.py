@@ -1,7 +1,9 @@
 from Room import *
 import random
+import copy
 
 def NewFloor(floorSize = "large"):
+    global currentFloorLayout
     #Defines where and what the entrance room is
     entranceRoom = [4,4]
     entranceRoomObject = Room("1111")
@@ -13,8 +15,16 @@ def NewFloor(floorSize = "large"):
         totalRooms = 15
     elif floorSize.lower() == "medium":
         totalRooms = 20
-    else:
+    elif floorSize.lower() == "large":
         totalRooms = 25
+    elif floorSize.lower() == "xlarge":
+        totalRooms = 30
+    elif floorSize.lower() == "2xlarge":
+        totalRooms = 35
+    elif floorSize.lower() == "3xlarge":
+        totalRooms = 40
+    elif floorSize.lower() == "4xlarge":
+        totalRooms = 45
 
     #Randomly chooses one of the 4 sides of the max floor size to be the exit room
     exitRoomType = random.randint(1,4)
@@ -31,6 +41,13 @@ def NewFloor(floorSize = "large"):
     else:
         exitRoom = [1,4]
         exitRoomObject = Room("0100")
+
+    print(exitRoom)
+    print(exitRoomObject.roomID)
+    print(exitRoomObject.northConnection)
+    print(exitRoomObject.eastConnection)
+    print(exitRoomObject.southConnection)
+    print(exitRoomObject.westConnection)
 
     #Creates the 2D array that the floor layout and all the room objects will be stored inside
     currentFloorLayout = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]]
@@ -61,145 +78,181 @@ def NewFloor(floorSize = "large"):
         availableLocations.append([exitRoom[0] + 3 * int((4 - exitRoom[0]) / 3),exitRoom[1] + 1])
         availableLocations.append([exitRoom[0] + 4 * int((4 - exitRoom[0]) / 3),exitRoom[1]])
 
-    roomsPlaced = 2
+    roomsPlaced = 2 #Starts count of how many rooms have been placed to know when to stop placing rooms. Starts at 2 because of the start and end room being placed
 
-    roomTypes = ["0000","0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110","1111"]
+    #A list of all the room types that will be copied to another variable to keep track of all the rooms that could be placed in a location
+    roomTypes = ["0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110","1111"] 
 
-    while remainingRooms > 0:
-        workingLocation = availableLocations[0]
-        possibleRooms = roomTypes
+    #Starts loop to place rooms while there are still rooms to place
+    while remainingRooms > 0 and len(availableLocations) > 0:
+        ##showFloorLayout(currentFloorLayout)
+        ##print(len(availableLocations))
+        workingLocation = availableLocations[0] #Places a room at the first listed available location
+        ##print(workingLocation)
+        possibleRooms = copy.deepcopy(roomTypes) #Copies over the room types to a new variable so it can be manipulated without loosing the full list
+        ##print(possibleRooms)
+        
+        #Starts a loop to check every type of room to see if it can work in the working location
+        for j in range(2):
+            ##print("Pass num: {}".format(j + 1))
+            deletedRooms = 0 #Keeps track of how many room types have been deleted from possibleRooms so that when checking the list for viable room types it doesn't go out of range of the list
+            for i in range(len(possibleRooms)):
+                ##print(len(possibleRooms))
 
-        deletedRooms = 0
-        for i in range(len(possibleRooms)):
-            
-            roomDeleted = False
+                roomDeleted = False #Makes a variable that shows if a room type has been deleted this cycle so that there aren't more than one room type deleted per cycle
+                ##print(possibleRooms[i - deletedRooms])
 
-            if roomsPlaced < 4:
-                if exitRoom[0] == 4:
-                    if possibleRooms[i - deletedRooms][0] == "0" or possibleRooms[i - deletedRooms][2] == "0":
+                #Special condition for the first two rooms that are placed between the start and end room
+                if roomsPlaced < 4:
+                    
+                    #Checks if the exit was placed in a vertical line with the entrance
+                    if exitRoom[0] == 4:
+                        
+                        #Makes sure the placed room will have a door above and below it so there is a path from the entrance to the exit no matter how the other rooms are placed
+                        if possibleRooms[i - deletedRooms][0] == "0" or possibleRooms[i - deletedRooms][2] == "0": 
+                            possibleRooms.pop(i - deletedRooms)
+                            deletedRooms += 1
+                            roomDeleted = True
+                            ##print("Deleted due to no path to exit")
+                            
+                    #For when the exit is placed in a horizontal line with the entrance
+                    else:
+
+                        #Makes sure the placed room will have a door to the left and right of it so there is a path from the entrance to the exit no matter how the other rooms are placed
+                        if possibleRooms[i - deletedRooms][1] == "0" or possibleRooms[i - deletedRooms][3] == "0":
+                            possibleRooms.pop(i - deletedRooms)
+                            deletedRooms += 1
+                            roomDeleted = True
+                            ##print("Deleted due to no path to exit")
+
+                doorsToSpace = 0 #Starts to count how many doors of the current room type being checked will lead to 
+                
+                if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 1 and possibleRooms[i - deletedRooms][0] == "1" and roomDeleted == False:
+                    possibleRooms.pop(i - deletedRooms)
+                    deletedRooms += 1
+                    roomDeleted = True
+                    ##print("Deleted to to door to edge")
+                        
+                elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 0 and possibleRooms[i - deletedRooms][0] == "1" and roomDeleted == False:
+                    doorsToSpace += 1
+                
+                elif roomDeleted == False and currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 0:
+                    if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == True and possibleRooms[i - deletedRooms][0] == "0":
                         possibleRooms.pop(i - deletedRooms)
                         deletedRooms += 1
                         roomDeleted = True
-                else:
-                    if possibleRooms[i - deletedRooms][1] == "0" or possibleRooms[i - deletedRooms][3] == "0":
+                        ##print("Deleted due to wall to door (To the north)")
+                        
+                    elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == False and possibleRooms[i - deletedRooms][0] == "1":
                         possibleRooms.pop(i - deletedRooms)
                         deletedRooms += 1
                         roomDeleted = True
+                        ##print("Deleted due to door to wall (To the north)")
 
-            doorsToSpace = 0
-            
-            if currentFloorLayout[workingLocation[0]][workingLocation[0] - 1] == 1 and roomDeleted == False:
-                if possibleRooms[i - deletedRooms][0] == "0":
+                if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][1] == "1" and roomDeleted == False:
                     possibleRooms.pop(i - deletedRooms)
                     deletedRooms += 1
                     roomDeleted = True
-                    
-            elif currentFloorLayout[workingLocation[0]][workingLocation[0] - 1] == 0 and possibleRooms[i - deletedRooms][0] == "0" and roomDeleted == False:
-                doorsToSpace += 1
-
-            elif currentFloorLayout[workingLocation[0]][workingLocation[0] - 1] == 0 and possibleRooms[i - deletedRooms][0] == "1" and roomDeleted == False:
-                pass
-            
-            elif roomDeleted == False:
-                if currentFloorLayout[workingLocation[0]][workingLocation[0] - 1].southConnection == True and possibleRooms[i - deletedRooms][0] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-                elif currentFloorLayout[workingLocation[0]][workingLocation[0] - 1].southConnection == False and possibleRooms[i - deletedRooms][0] == "1":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-
-            if currentFloorLayout[workingLocation[0] + 1][workingLocation[0]] == 1 and roomDeleted == False:
-                if possibleRooms[i - deletedRooms][1] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-            elif currentFloorLayout[workingLocation[0] + 1][workingLocation[0]] == 0 and possibleRooms[i - deletedRooms][1] == "0" and roomDeleted == False:
-                doorsToSpace += 1
-
-            elif currentFloorLayout[workingLocation[0] + 1][workingLocation[0]] == 0 and possibleRooms[i - deletedRooms][1] == "1" and roomDeleted == False:
-                pass
-            
-            elif roomDeleted == False:
-                if currentFloorLayout[workingLocation[0] + 1][workingLocation[0]].westConnection == True and possibleRooms[i - deletedRooms][1] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-                elif currentFloorLayout[workingLocation[0] + 1][workingLocation[0]].westConnection == False and possibleRooms[i - deletedRooms][1] == "1":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-
-            if currentFloorLayout[workingLocation[0]][workingLocation[0] + 1] == 1 and roomDeleted == False:
-                if possibleRooms[i - deletedRooms][2] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-            elif currentFloorLayout[workingLocation[0]][workingLocation[0] + 1] == 0 and possibleRooms[i - deletedRooms][2] == "0" and roomDeleted == False:
-                doorsToSpace += 1
-
-            elif currentFloorLayout[workingLocation[0]][workingLocation[0] + 1] == 0 and possibleRooms[i - deletedRooms][2] == "1" and roomDeleted == False:
-                pass
-            
-            elif roomDeleted == False:
-                if currentFloorLayout[workingLocation[0]][workingLocation[0] + 1].northConnection == True and possibleRooms[i - deletedRooms][2] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-                elif currentFloorLayout[workingLocation[0]][workingLocation[0] + 1].northConnection == False and possibleRooms[i - deletedRooms][2] == "1":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-
-            if currentFloorLayout[workingLocation[0] - 1][workingLocation[0]] == 1 and roomDeleted == False:
-                if possibleRooms[i - deletedRooms][3] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-            elif currentFloorLayout[workingLocation[0] - 1][workingLocation[0]] == 0 and possibleRooms[i - deletedRooms][3] == "0" and roomDeleted == False:
-                doorsToSpace += 1
-
-            elif currentFloorLayout[workingLocation[0] - 1][workingLocation[0]] == 0 and possibleRooms[i - deletedRooms][3] == "1" and roomDeleted == False:
-                pass
-            
-            elif roomDeleted == False:
-                if currentFloorLayout[workingLocation[0] - 1][workingLocation[0]].northConnection == True and possibleRooms[i - deletedRooms][3] == "0":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-                    
-                elif currentFloorLayout[workingLocation[0] - 1][workingLocation[0]].northConnection == False and possibleRooms[i - deletedRooms][3] == "1":
-                    possibleRooms.pop(i - deletedRooms)
-                    deletedRooms += 1
-                    roomDeleted = True
-
-            if roomDeleted == False:
-                if len(availableLocations) + 3 > remainingRooms:
-                    if doorsToSpace >= 3:
+                    ##print("Deleted to to door to edge")
+                        
+                elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][1] == "1" and roomDeleted == False:
+                    doorsToSpace += 1
+                
+                elif roomDeleted == False and currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 0:
+                    if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == True and possibleRooms[i - deletedRooms][1] == "0":
                         possibleRooms.pop(i - deletedRooms)
                         deletedRooms += 1
                         roomDeleted = True
-
-                elif len(availableLocations) + 2 > remainingRooms:
-                    if doorsToSpace >= 2:
+                        ##print("Deleted due to wall to door (To the east)")
+                        
+                    elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == False and possibleRooms[i - deletedRooms][1] == "1":
                         possibleRooms.pop(i - deletedRooms)
                         deletedRooms += 1
                         roomDeleted = True
+                        ##print("Deleted due to door to wall (To the east)")
 
-                elif len(availableLocations) + 1 > remainingRooms:
-                    if doorsToSpace >= 1:
+                if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 1 and possibleRooms[i - deletedRooms][2] == "1" and roomDeleted == False:
+                    possibleRooms.pop(i - deletedRooms)
+                    deletedRooms += 1
+                    roomDeleted = True
+                    ##print("Deleted to to door to edge")
+                        
+                elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 0 and possibleRooms[i - deletedRooms][2] == "1" and roomDeleted == False:
+                    doorsToSpace += 1
+                
+                elif roomDeleted == False and currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 0:
+                    if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == True and possibleRooms[i - deletedRooms][2] == "0":
                         possibleRooms.pop(i - deletedRooms)
                         deletedRooms += 1
                         roomDeleted = True
+                        ##print("Deleted due to wall to door (To the south)")
+                        
+                    elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == False and possibleRooms[i - deletedRooms][2] == "1":
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to door to wall (To the south)")
 
+                if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][3] == "1" and roomDeleted == False:
+                    possibleRooms.pop(i - deletedRooms)
+                    deletedRooms += 1
+                    roomDeleted = True
+                    ##print("Deleted to to door to edge")
+                        
+                elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][3] == "1" and roomDeleted == False:
+                    doorsToSpace += 1
+                
+                elif roomDeleted == False and currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 0:
+                    if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == True and possibleRooms[i - deletedRooms][3] == "0":
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to wall to door (To the west)")
+                        
+                    elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == False and possibleRooms[i - deletedRooms][3] == "1":
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to door to wall (To the west)")
+
+                if roomDeleted == False:
+                    if len(availableLocations) + 3 > remainingRooms and doorsToSpace >= 3:
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to to many branches (3+)")
+
+                    elif len(availableLocations) + 2 > remainingRooms and doorsToSpace >= 2:
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to too many branches (2+)")
+
+                    elif len(availableLocations) + 1 > remainingRooms and doorsToSpace >= 1:
+                        possibleRooms.pop(i - deletedRooms)
+                        deletedRooms += 1
+                        roomDeleted = True
+                        ##print("Deleted due to too many branches (1+)")
+
+                    else:
+                        if j == 0:
+                            if len(availableLocations) <= 3 and remainingRooms > 1 and doorsToSpace == 0 and i - deletedRooms != 0:
+                                possibleRooms.pop(i - deletedRooms)
+                                deletedRooms += 1
+                                roomDeleted = True
+                                ##print("Available locations: {}".format(len(availableLocations)))
+                                ##print("Deleted due to not enough branches on first round")
+                        else:
+                            if len(availableLocations) <= 5 and remainingRooms > 1 and doorsToSpace == 0 and len(possibleRooms) >= 2:
+                                possibleRooms.pop(i - deletedRooms)
+                                deletedRooms += 1
+                                roomDeleted = True
+                                ##print("Available locations: {}".format(len(availableLocations)))
+                                ##print("Deleted due to not enough branches on second round")
+
+        ##print(possibleRooms)
         chosenRoomType = random.choice(possibleRooms)
+        ##print(chosenRoomType)
 
         newPossibleLocations = []
         
@@ -216,9 +269,7 @@ def NewFloor(floorSize = "large"):
             newPossibleLocations.append([workingLocation[0] - 1,workingLocation[1]])
             
         for i in range(len(newPossibleLocations)):
-            if newPossibleLocations[i] in availableLocations:
-                pass
-            else:
+            if newPossibleLocations[i] not in availableLocations:
                 availableLocations.append(newPossibleLocations[i])
 
         newRoom = Room(chosenRoomType)
@@ -232,22 +283,29 @@ def NewFloor(floorSize = "large"):
 
         roomsPlaced += 1
         remainingRooms -= 1
-        
+
+    ##print(availableLocations)
+
+    showFloorLayout(currentFloorLayout)
+    
     #Returns the finished 2D array of the floor layout and room objects
     return currentFloorLayout
-    
-currentFloorLayout = NewFloor("Large")
 
-graphicalFloorLayout = currentFloorLayout
-
-for x in range (9):
-    line = ""
+def showFloorLayout(currentFloorLayout):
+    graphicalFloorLayout = copy.deepcopy(currentFloorLayout)
+        
     for y in range (9):
-        if graphicalFloorLayout[x][y] == 1:
-            graphicalFloorLayout[x][y] = "X"
-        elif graphicalFloorLayout[x][y] == 0:
-            graphicalFloorLayout[x][y] = "O"
-        else:
-            graphicalFloorLayout[x][y] = "+"
-        line += graphicalFloorLayout[x][y] + " "
-    print(line)
+        line = ""
+        for x in range (9):
+            if currentFloorLayout[x][y] == 1:
+                graphicalFloorLayout[x][y] = "X"
+            elif currentFloorLayout[x][y] == 0:
+                graphicalFloorLayout[x][y] = "O"
+            else:
+                graphicalFloorLayout[x][y] = "+"
+            line += graphicalFloorLayout[x][y] + " "
+        print(line)
+
+for i in range(1):
+    currentFloorLayout = NewFloor("Large")
+    print()
