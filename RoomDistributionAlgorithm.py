@@ -292,20 +292,27 @@ def NewFloor(floorSize = "large"):
     return currentFloorLayout
 
 def showFloorLayout(currentFloorLayout):
-    graphicalFloorLayout = copy.deepcopy(currentFloorLayout)
-        
-    for y in range (9):
+    
+    graphicalFloorLayout = [["X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X"," "," "," "," "," "," "," "," "," "," "," "," "," ","X"],["X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"]]
+
+    for y in range(9):
+        for x in range(9):
+            if currentFloorLayout[x][y] != 0 and currentFloorLayout[x][y] != 1:
+                graphicalFloorLayout[((x - 1) * 2) + 1][((y - 1) * 2) + 1] = "+"
+                if currentFloorLayout[x][y].eastConnection == True:
+                    graphicalFloorLayout[((x - 1) * 2) + 2][((y - 1) * 2) + 1] = "-"
+                if currentFloorLayout[x][y].southConnection == True:
+                    graphicalFloorLayout[((x - 1) * 2) + 1][((y - 1) * 2) + 2] = "|"
+
+    for y in range (15):
         line = ""
-        for x in range (9):
-            if currentFloorLayout[x][y] == 1:
-                graphicalFloorLayout[x][y] = "X"
-            elif currentFloorLayout[x][y] == 0:
-                graphicalFloorLayout[x][y] = "O"
-            else:
-                graphicalFloorLayout[x][y] = "+"
-            line += graphicalFloorLayout[x][y] + " "
+        for x in range (15):
+            line += str(graphicalFloorLayout[x][y]) + " "
         print(line)
 
+for i in range(1):
+    currentFloorLayout = NewFloor("xLarge")
+    print()
 for i in range(1):
     currentFloorLayout = NewFloor("Large")
     print()
