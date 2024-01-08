@@ -286,7 +286,7 @@ def NewFloor(floorSize = "large"):
 
     ##print(availableLocations)
 
-    showFloorLayout(currentFloorLayout)
+##    showFloorLayout(currentFloorLayout)
     
     #Returns the finished 2D array of the floor layout and room objects
     return currentFloorLayout
@@ -310,9 +310,6 @@ def showFloorLayout(currentFloorLayout):
             line += str(graphicalFloorLayout[x][y]) + " "
         print(line)
 
-for i in range(1):
-    currentFloorLayout = NewFloor("xLarge")
-    print()
-for i in range(1):
-    currentFloorLayout = NewFloor("Large")
-    print()
+##for i in range(1):
+##    currentFloorLayout = NewFloor("xLarge")
+##    print()
