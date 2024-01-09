@@ -10,13 +10,12 @@ from TileMap import *
 pygame.init()
 clock = pygame.time.Clock()
 
-#Creates a pygame screen
+#Creates a pygame screen abd gives it a caption
 screen = pygame.display.set_mode((400,400))
-#Gives the pygame screen a caption
 pygame.display.set_caption("Journey To The Core")
 
-running = True
-count = 0
+running = True #Used to determine if the user has quit the program or not
+count = 0      #Used to reduce the rate that the Dwarf sprite goes through the frames of it's animation
 
 currentFloorLayout = NewFloor("Large")
 showFloorLayout(currentFloorLayout)
