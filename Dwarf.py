@@ -34,10 +34,10 @@ class Dwarf(pygame.sprite.Sprite):
                     movedUp = True
                     
             if self.y < 20:
-                if self.x < 120 and self.x >= 120 - self.speed and pressedKeys[K_a] and not pressedKeys[K_w]:
+                if self.x < 120 and self.x >= 120 - self.speed and pressedKeys[K_a]:
                     self.x = 120
                     
-                if self.x > 280 - self.width and self.x <= 280 - self.width + self.speed and pressedKeys[K_d] and not pressedKeys[K_w]:
+                if self.x > 280 - self.width and self.x <= 280 - self.width + self.speed and pressedKeys[K_d]:
                     self.x = 280 - self.width
                 
         if roomID[1] == "1":
@@ -48,10 +48,10 @@ class Dwarf(pygame.sprite.Sprite):
                     movedRight = True
 
             if self.x > 400 - self.width - 20:
-                if self.y < 120 and self.y >= 120 - self.speed and pressedKeys[K_w] and not pressedKeys[K_d]:
+                if self.y < 120 and self.y >= 120 - self.speed and pressedKeys[K_w]:
                     self.y = 120
                     
-                if self.y > 280 - self.height and self.y <= 280 - self.height + self.speed and pressedKeys[K_s] and not pressedKeys[K_d]:
+                if self.y > 280 - self.height and self.y <= 280 - self.height + self.speed and pressedKeys[K_s]:
                     self.y = 280 - self.height
                     
         if roomID[2] == "1":
@@ -62,10 +62,10 @@ class Dwarf(pygame.sprite.Sprite):
                     movedDown = True
                     
             if self.y > 400 - self.height - 20:
-                if self.x < 120 and self.x >= 120 - self.speed and pressedKeys[K_a] and not pressedKeys[K_s]:
+                if self.x < 120 and self.x >= 120 - self.speed and pressedKeys[K_a]:
                     self.x = 120
                     
-                if self.x > 280 - self.width and self.x <= 280 - self.width + self.speed and pressedKeys[K_d] and not pressedKeys[K_s]:
+                if self.x > 280 - self.width and self.x <= 280 - self.width + self.speed and pressedKeys[K_d]:
                     self.x = 280 - self.width
 
         if roomID[3] == "1":
@@ -76,10 +76,10 @@ class Dwarf(pygame.sprite.Sprite):
                     movedLeft = True
 
             if self.x < 20:
-                if self.y < 120 and self.y >= 120 - self.speed and pressedKeys[K_w] and not pressedKeys[K_a]:
+                if self.y < 120 and self.y >= 120 - self.speed and pressedKeys[K_w]:
                     self.y = 120
                     
-                if self.y > 280 - self.height and self.y <= 280 - self.height + self.speed and pressedKeys[K_s] and not pressedKeys[K_a]:
+                if self.y > 280 - self.height and self.y <= 280 - self.height + self.speed and pressedKeys[K_s]:
                     self.y = 280 - self.height
                     
         if self.y > 0 + 20 and pressedKeys[K_w] and movedUp == False:
