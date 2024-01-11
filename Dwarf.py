@@ -2,13 +2,13 @@ import pygame
 from pygame.locals import *
 
 class Dwarf(pygame.sprite.Sprite):
-    def __init__(self, dwarfSpriteSheet):
+    def __init__(self, dwarfSpriteSheet,scale,speed):
         super().__init__()
         self.height = 55
         self.width = 45
         self.x = 200 - int(self.width / 2)
         self.y = 200 - int(self.height / 2)
-        self.speed = 3
+        self.speed = 3 * scale
         self.frame = 0
         self.state = 0
         self.buffer = 0
@@ -102,11 +102,14 @@ class Dwarf(pygame.sprite.Sprite):
             self.state = 3
             movedLeft = True
             
-    def draw(self, screen, count):
+    def draw(self, screen, count, scale):
         if count == 0:
             self.frame += 1
             if self.frame == 4:
                 self.frame = 0
 
         self.image = self.spriteSheet.subsurface(Rect(self.frame * self.width + self.buffer, self.state * self.height + self.buffer, self.width - self.buffer, self.height - self.buffer))
-        screen.blit(self.image,(self.x, self.y))
+        self.imageSize = (self.width * scale, self.height * scale)
+        self.image = pygame.transform.scale(self.image, self.imageSize)
+        self.location = (self.x * scale, self.y * scale)
+        screen.blit(self.image,self.location)
