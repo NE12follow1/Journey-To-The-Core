@@ -11,7 +11,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 #Creates a pygame screen abd gives it a caption
-screen = pygame.display.set_mode((400,400))
+screen = pygame.display.set_mode((400 * scale,400 * scale))
 pygame.display.set_caption("Journey To The Core")
 
 running = True #Used to determine if the user has quit the program or not
@@ -20,12 +20,23 @@ count = 0      #Used to reduce the rate that the Dwarf sprite goes through the f
 currentFloorLayout = NewFloor("Large")  #Creates a 2D array room layout using the imported module
 showFloorLayout(currentFloorLayout)
 currentRoomLocation = [4,4]
-dwarf = Dwarf("Assets/SpriteSheet.png")
+dwarf = Dwarf("Assets/SpriteSheet.png",scale,speed)
+
+font = pygame.font.SysFont("Arial" , 18 , bold = True)
+
+def fps_counter():
+    truefps = str(int(clock.get_fps()))
+    fps_t = font.render(truefps , 1, pygame.Color("RED"))
+    screen.blit(fps_t,(0,0))
 
 #Starts the main game loop
 while running:
-    if count == 9:
-        count = 0
+    if int(clock.get_fps()) != 0:
+        if count == int((1 / (int(clock.get_fps()) / 60)) * 8):
+            count = 0
+
+    if count == 8:
+            count = 0
 
     #Checks if the user presses the escape key to quit the game
     for event in pygame.event.get():
@@ -57,14 +68,20 @@ while running:
         dwarf.y = 0 + 20
         
     currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID))
-    currentRoomTiles = currentRoomMap.loadTileMap()
-    currentRoomMap.draw(currentRoomTiles,screen)
+    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale)
+    currentRoomTiles = currentRoomMap.loadTileMap(scale)
+    currentRoomMap.draw(currentRoomTiles,screen,scale)
 
     dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID)
-    dwarf.draw(screen,count)
+    dwarf.draw(screen,count,scale)
+
+    fps_counter()
     
     pygame.display.update()
+
+    #Used to set the game to the fps found in the settings file
+    clock.tick(fps)
+    count += 1
 
     #Used to set the game to the fps found in the settings file
     clock.tick(fps)
