@@ -20,7 +20,7 @@ count = 0      #Used to reduce the rate that the Dwarf sprite goes through the f
 currentFloorLayout = NewFloor("Large")  #Creates a 2D array room layout using the imported module
 showFloorLayout(currentFloorLayout)
 currentRoomLocation = [4,4]
-dwarf = Dwarf("Assets/SpriteSheet.png",scale,speed)
+dwarf = Dwarf("Assets/SpriteSheet.png",scale)
 
 font = pygame.font.SysFont("Arial" , 18 , bold = True)
 
