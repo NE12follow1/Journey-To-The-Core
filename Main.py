@@ -51,6 +51,7 @@ while running:
     #Fills in the screen with black 
     screen.fill((0,0,0))
 
+    #Moves the character to the next room if they go through the door to that room
     if dwarf.x <= 0:
         currentRoomLocation[0] -= 1
         dwarf.x = 400 - dwarf.width - 20
@@ -67,9 +68,9 @@ while running:
         currentRoomLocation[1] += 1
         dwarf.y = 0 + 20
         
-    currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale)
-    currentRoomTiles = currentRoomMap.loadTileMap(scale)
+    currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
+    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map of the type of room the player is currently in
+    currentRoomTiles = currentRoomMap.loadTileMap(scale)                                                            
     currentRoomMap.draw(currentRoomTiles,screen,scale)
 
     dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID)
