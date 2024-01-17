@@ -41,7 +41,7 @@ while running:
     #Checks if the user presses the escape key to quit the game
     for event in pygame.event.get():
         if event.type == KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key == K_ESCAPE:
                 running = False
                 pygame.quit()
         if event.type == QUIT:
