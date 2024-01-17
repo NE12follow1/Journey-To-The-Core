@@ -4,7 +4,7 @@ class TileMap(pygame.sprite.Sprite):
     def __init__(self, roomSpriteSheet, tileMap, scale):
         super().__init__()
         self.file = open(tileMap, mode = "r")
-        self.tilesSize = (1000 * scale, 1000 * scale)
+        self.tilesSize = (600 * scale, 400 * scale)
         self.tiles = pygame.image.load(roomSpriteSheet)
         self.tiles = pygame.transform.scale(self.tiles, self.tilesSize)
 
