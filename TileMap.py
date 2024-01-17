@@ -1,12 +1,14 @@
-import pygame
+import pygame #Used for displaying the game
 
+#A class to make tile maps for the rooms and draw them on the screen
 class TileMap(pygame.sprite.Sprite):
-    def __init__(self, roomSpriteSheet, tileMap, scale):
-        super().__init__()
-        self.file = open(tileMap, mode = "r")
-        self.tilesSize = (600 * scale, 400 * scale)
-        self.tiles = pygame.image.load(roomSpriteSheet)
-        self.tiles = pygame.transform.scale(self.tiles, self.tilesSize)
+    def __init__(self, roomSpriteSheet, tileMap, scale):                       #Initialising function that is ran when a new TileMap object is made
+        super().__init__()                                                     #Takes initialisation information for pygame sprie objects
+        self.file = open(tileMap, mode = "r")                                  #Opens the .txt file that maps out the tile locations for the room being displayed on the screen
+        self.tiles = pygame.image.load(roomSpriteSheet)                        #Loads the sprite sheet image that is used to make the rooms
+        self.tileSize = 100 * scale                                            #Defines the size of each square tile in each direction
+        self.spriteSheetSize = (6 * tileSize, 4 * tileSize)                    #Defines the size of the sprite sheet with the tiles on it
+        self.tiles = pygame.transform.scale(self.tiles, self.spriteSheetSize)  #Scales the sprite sheet up or down to the user's needs
 
     def loadTileMap(self,scale):
         tileMap = []
