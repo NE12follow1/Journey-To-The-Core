@@ -31,10 +31,6 @@ def fps_counter():
 
 #Starts the main game loop
 while running:
-    if int(clock.get_fps()) != 0:
-        if count == int((1 / (int(clock.get_fps()) / 60)) * 8):
-            count = 0
-
     if count == 8:
             count = 0
 
@@ -79,10 +75,6 @@ while running:
     fps_counter()                                                                                                   #Calls function to draw the current fps of the screen onto the screen
     
     pygame.display.update()                                                                                         #Updates the screen's graphics 
-
-    #Used to set the game to the fps found in the settings file
-    clock.tick(fps)
-    count += 1
 
     #Used to set the game to the fps found in the settings file
     clock.tick(fps)
