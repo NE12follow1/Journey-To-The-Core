@@ -3,8 +3,8 @@ import random                           #Used for anything that requires randomn
 from pygame.locals import *             #Used to reduce the need for typing pygame. for certain things 
 from Settings import *                  #A separate python file that holds many constants to do with pygame
 from RoomDistributionAlgorithm import * #A separate python file that creates the floor layout
-from Dwarf import *
-from TileMap import *
+from Dwarf import *                     #A separate python file that handles the visuals of the player character and how they move around
+from TileMap import *                   #A separate python file that is used to make a tile map for the screen and draws it to the screen
     
 #Initialises the pygame library and the clock used to determine the fps (frames per second) of the game
 pygame.init()
