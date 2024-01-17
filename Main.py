@@ -69,16 +69,16 @@ while running:
         dwarf.y = 0 + 20
         
     currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map of the type of room the player is currently in
-    currentRoomTiles = currentRoomMap.loadTileMap(scale)                                                            
-    currentRoomMap.draw(currentRoomTiles,screen,scale)
+    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map object of the type of room the player is currently in
+    currentRoomTiles = currentRoomMap.loadTileMap(scale)                                                            #Makes the tile map for the tile map object
+    currentRoomMap.draw(currentRoomTiles,screen,scale)                                                              #Draws the room on the screen
 
-    dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID)
-    dwarf.draw(screen,count,scale)
+    dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID)                 #Updates the position of the dwarf character on the screen
+    dwarf.draw(screen,count,scale)                                                                                  #Draws the dwarf character onto the screen
 
-    fps_counter()
+    fps_counter()                                                                                                   #Calls function to draw the current fps of the screen onto the screen
     
-    pygame.display.update()
+    pygame.display.update()                                                                                         #Updates the screen's graphics 
 
     #Used to set the game to the fps found in the settings file
     clock.tick(fps)
