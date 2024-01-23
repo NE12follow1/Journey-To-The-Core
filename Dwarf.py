@@ -13,7 +13,6 @@ class Dwarf(pygame.sprite.Sprite):
         self.state = 0
         self.buffer = 0
         self.spriteSheet = pygame.image.load(dwarfSpriteSheet)
-        self.image = self.spriteSheet.subsurface(Rect(0, 0, self.width, self.height))
 
     def updatePosition(self, roomID):
         if self.state < 4:
