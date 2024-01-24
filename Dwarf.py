@@ -2,13 +2,13 @@ import pygame
 from pygame.locals import *
 
 class Dwarf(pygame.sprite.Sprite):
-    def __init__(self, dwarfSpriteSheet,scale):
+    def __init__(self, dwarfSpriteSheet):
         super().__init__()
         self.height = 55
         self.width = 45
         self.x = 200 - int(self.width / 2)
         self.y = 200 - int(self.height / 2)
-        self.speed = 3 * scale
+        self.speed = 3
         self.frame = 0
         self.state = 0
         self.buffer = 0
