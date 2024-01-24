@@ -15,12 +15,12 @@ screen = pygame.display.set_mode((400 * scale,400 * scale))
 pygame.display.set_caption("Journey To The Core")
 
 running = True #Used to determine if the user has quit the program or not
-count = 0      #Used to reduce the rate that the Dwarf sprite goes through the frames of it's animation
+count = 0      #Used to stall the dwarf's animation
 
 currentFloorLayout = NewFloor("Large")  #Creates a 2D array room layout using the imported module
 showFloorLayout(currentFloorLayout)
 currentRoomLocation = [4,4]
-dwarf = Dwarf("Assets/SpriteSheet.png",scale)
+dwarf = Dwarf("Assets/SpriteSheet.png",scale) #Initialises the dwarf object
 
 font = pygame.font.SysFont("Arial" , 18 , bold = True)
 
