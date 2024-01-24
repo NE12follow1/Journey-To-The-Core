@@ -31,6 +31,7 @@ def fps_counter():
 
 #Starts the main game loop
 while running:
+    #Resets count once it reaches a value of 8
     if count == 8:
             count = 0
 
