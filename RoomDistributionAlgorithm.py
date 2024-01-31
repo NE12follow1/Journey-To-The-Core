@@ -72,8 +72,6 @@ def NewFloor(floorSize = "large"):
         availableLocations.append([exitRoom[0] + 3 * int((4 - exitRoom[0]) / 3),exitRoom[1] + 1])
         availableLocations.append([exitRoom[0] + 4 * int((4 - exitRoom[0]) / 3),exitRoom[1]])
 
-    roomsPlaced = 2 #Starts count of how many rooms have been placed to know when to stop placing rooms. Starts at 2 because of the start and end room being placed
-
     #A list of all the room types that will be copied to another variable to keep track of all the rooms that could be placed in a location
     roomTypes = ["0001","0010","0011","0100","0101","0110","0111","1000","1001","1010","1011","1100","1101","1110","1111"] 
 
@@ -82,122 +80,128 @@ def NewFloor(floorSize = "large"):
         workingLocation = availableLocations[0] #Places a room at the first listed available location
 
         possibleRooms = copy.deepcopy(roomTypes) #Copies over the room types to a new variable so it can be manipulated without modifying the full list
+
+        deletedRooms = 0 #Keeps track of how many room types have been deleted from possibleRooms so that when checking the list for viable room types it doesn't go out of range of the list
         
         #Starts a loop to check every type of room to see if it can work in the working location
-        for j in range(2):
-            deletedRooms = 0 #Keeps track of how many room types have been deleted from possibleRooms so that when checking the list for viable room types it doesn't go out of range of the list
-            for i in range(len(possibleRooms)):
+        for i in range(len(possibleRooms)):
 
-                roomDeleted = False #Makes a variable that shows if a room type has been deleted this cycle so that there aren't more than one room type deleted per cycle
-
-                #Special condition for the first two rooms that are placed between the start and end room
-                if roomsPlaced < 4:
-                    
-                    #Checks if the exit was placed in a vertical line with the entrance
-                    if exitRoom[0] == 4:
-                        
-                        #Makes sure the placed room will have a door above and below it so there is a path from the entrance to the exit no matter how the other rooms are placed
-                        if possibleRooms[i - deletedRooms][0] == "0" or possibleRooms[i - deletedRooms][2] == "0": 
-                            deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-                            
-                    #For when the exit is placed in a horizontal line with the entrance
-                    else:
-
-                        #Makes sure the placed room will have a door to the left and right of it so there is a path from the entrance to the exit no matter how the other rooms are placed
-                        if possibleRooms[i - deletedRooms][1] == "0" or possibleRooms[i - deletedRooms][3] == "0":
-                            deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                doorsToSpace = 0 #Starts to count how many doors of the current room type being checked will lead to 
-
-                #Checks the room type doesnt have a door pointing north into the edge of the floor
-                if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 1 and possibleRooms[i - deletedRooms][0] == "1" and roomDeleted == False:
-                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                #Checks if the room type has a door pointing north into an empty space
-                elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 0 and possibleRooms[i - deletedRooms][0] == "1" and roomDeleted == False:
-                    doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
-                    
-                #Checks if there is a room to the north of the current one
-                elif roomDeleted == False and currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 0:
-                    #Checks that the room type has a door towards the north if the room to the north has a door towards the south 
-                    if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == True and possibleRooms[i - deletedRooms][0] == "0":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                    #Checks that the room type doesn't have a door to the north if the room to the north hasn't got a door to the south
-                    elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == False and possibleRooms[i - deletedRooms][0] == "1":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                #Checks the room type doesnt have a door pointing east into the edge of the floor
-                if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][1] == "1" and roomDeleted == False:
-                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-                    
-                #Checks if the room type has a door pointing east into an empty space    
-                elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][1] == "1" and roomDeleted == False:
-                    doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
-
-                #Checks if there is a room to the east of the current one
-                elif roomDeleted == False and currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 0:
-                    #Checks that the room type has a door towards the east if the room to the east has a door towards the west
-                    if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == True and possibleRooms[i - deletedRooms][1] == "0":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                    #Checks that the room type doesn't have a door to the east if the room to the east hasn't got a door to the west
-                    elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == False and possibleRooms[i - deletedRooms][1] == "1":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                #Checks the room type doesnt have a door pointing south into the edge of the floor
-                if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 1 and possibleRooms[i - deletedRooms][2] == "1" and roomDeleted == False:
-                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-                    
-                #Checks if the room type has a door pointing south into an empty space    
-                elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 0 and possibleRooms[i - deletedRooms][2] == "1" and roomDeleted == False:
-                    doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
-
-                #Checks if there is a room to the south of the current one
-                elif roomDeleted == False and currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 0:
-                    #Checks that the room type has a door towards the south if the room to the south has a door towards the north 
-                    if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == True and possibleRooms[i - deletedRooms][2] == "0":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-
-                    #Checks that the room type doesn't have a door to the south if the room to the south hasn't got a door to the north    
-                    elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == False and possibleRooms[i - deletedRooms][2] == "1":
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+            #Special condition for the first two rooms that are placed between the start and end room
+            if remainingRooms > totalRooms - 4:
                 
-                #Checks the room type doesnt have a door pointing west into the edge of the floor
-                if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][3] == "1" and roomDeleted == False:
-                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                #Checks if the exit was placed in a vertical line with the entrance
+                if exitRoom[0] == 4:
                     
-                #Checks if the room type has a door pointing west into an empty space    
-                elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][3] == "1" and roomDeleted == False:
-                    doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
-
-                #Checks if there is a west to the west of the current one
-                elif roomDeleted == False and currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 0:
-                    #Checks that the room type has a door towards the west if the room to the west has a door towards the east 
-                    if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == True and possibleRooms[i - deletedRooms][3] == "0":
+                    #Makes sure the placed room will have a door above and below it so there is a path from the entrance to the exit no matter how the other rooms are placed
+                    if possibleRooms[i - deletedRooms][0] == "0" or possibleRooms[i - deletedRooms][2] == "0": 
                         deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                        continue
+                        
+                #For when the exit is placed in a horizontal line with the entrance
+                else:
 
-                    #Checks that the room type doesn't have a door towards the west if the room to the west hasn't got a door towards the east
-                    elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == False and possibleRooms[i - deletedRooms][3] == "1":
+                    #Makes sure the placed room will have a door to the left and right of it so there is a path from the entrance to the exit no matter how the other rooms are placed
+                    if possibleRooms[i - deletedRooms][1] == "0" or possibleRooms[i - deletedRooms][3] == "0":
                         deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                        continue
 
-                if roomDeleted == False:
-                    if len(availableLocations) + 3 > remainingRooms and doorsToSpace >= 3:
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+            doorsToSpace = 0 #Starts to count how many doors of the current room type being checked will lead to 
 
-                    elif len(availableLocations) + 2 > remainingRooms and doorsToSpace >= 2:
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+            #Checks the room type doesnt have a door pointing north into the edge of the floor
+            if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 1 and possibleRooms[i - deletedRooms][0] == "1":
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
 
-                    elif len(availableLocations) + 1 > remainingRooms and doorsToSpace >= 1:
-                        deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+            #Checks if the room type has a door pointing north into an empty space
+            elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] == 0 and possibleRooms[i - deletedRooms][0] == "1":
+                doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
+                
+            #Checks if there is a room to the north of the current one
+            elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] - 1] != 0:
+                #Checks that the room type has a door towards the north if the room to the north has a door towards the south 
+                if currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == True and possibleRooms[i - deletedRooms][0] == "0":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
 
-                    else:
-                        if j == 0:
-                            if len(availableLocations) <= 3 and remainingRooms > 1 and doorsToSpace == 0 and i - deletedRooms != 0:
-                                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
-                        else:
-                            if len(availableLocations) <= 5 and remainingRooms > 1 and doorsToSpace == 0 and len(possibleRooms) >= 2:
-                                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                #Checks that the room type doesn't have a door to the north if the room to the north hasn't got a door to the south
+                elif currentFloorLayout[workingLocation[0]][workingLocation[1] - 1].southConnection == False and possibleRooms[i - deletedRooms][0] == "1":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+            #Checks the room type doesnt have a door pointing east into the edge of the floor
+            if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][1] == "1":
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
+                
+            #Checks if the room type has a door pointing east into an empty space    
+            elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][1] == "1":
+                doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
+
+            #Checks if there is a room to the east of the current one
+            elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] + 1][workingLocation[1]] != 0:
+                #Checks that the room type has a door towards the east if the room to the east has a door towards the west
+                if currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == True and possibleRooms[i - deletedRooms][1] == "0":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+                #Checks that the room type doesn't have a door to the east if the room to the east hasn't got a door to the west
+                elif currentFloorLayout[workingLocation[0] + 1][workingLocation[1]].westConnection == False and possibleRooms[i - deletedRooms][1] == "1":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+            #Checks the room type doesnt have a door pointing south into the edge of the floor
+            if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 1 and possibleRooms[i - deletedRooms][2] == "1":
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
+                
+            #Checks if the room type has a door pointing south into an empty space    
+            elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] == 0 and possibleRooms[i - deletedRooms][2] == "1":
+                doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
+
+            #Checks if there is a room to the south of the current one
+            elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 1 and currentFloorLayout[workingLocation[0]][workingLocation[1] + 1] != 0:
+                #Checks that the room type has a door towards the south if the room to the south has a door towards the north 
+                if currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == True and possibleRooms[i - deletedRooms][2] == "0":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+                #Checks that the room type doesn't have a door to the south if the room to the south hasn't got a door to the north    
+                elif currentFloorLayout[workingLocation[0]][workingLocation[1] + 1].northConnection == False and possibleRooms[i - deletedRooms][2] == "1":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+            
+            #Checks the room type doesnt have a door pointing west into the edge of the floor
+            if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 1 and possibleRooms[i - deletedRooms][3] == "1":
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
+                
+            #Checks if the room type has a door pointing west into an empty space    
+            elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] == 0 and possibleRooms[i - deletedRooms][3] == "1":
+                doorsToSpace += 1 #Increases the counted number of doors pointing towards an empty space
+
+            #Checks if there is a west to the west of the current one
+            elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 1 and currentFloorLayout[workingLocation[0] - 1][workingLocation[1]] != 0:
+                #Checks that the room type has a door towards the west if the room to the west has a door towards the east 
+                if currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == True and possibleRooms[i - deletedRooms][3] == "0":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+                #Checks that the room type doesn't have a door towards the west if the room to the west hasn't got a door towards the east
+                elif currentFloorLayout[workingLocation[0] - 1][workingLocation[1]].eastConnection == False and possibleRooms[i - deletedRooms][3] == "1":
+                    deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                    continue
+
+            if len(availableLocations) + 3 > remainingRooms and doorsToSpace >= 3:
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
+
+            elif len(availableLocations) + 2 > remainingRooms and doorsToSpace >= 2:
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
+
+            elif len(availableLocations) + 1 > remainingRooms and doorsToSpace >= 1:
+                deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                continue
 
         chosenRoomType = random.choice(possibleRooms) #Randomly chooses a room type from the list of possible room types
 
@@ -228,7 +232,6 @@ def NewFloor(floorSize = "large"):
                 availableLocations.pop(i)
                 break
 
-        roomsPlaced += 1
         remainingRooms -= 1
     
     #Returns the finished 2D array of the floor layout and room objects
@@ -244,8 +247,12 @@ def showFloorLayout(currentFloorLayout):
                 graphicalFloorLayout[((x - 1) * 2) + 1][((y - 1) * 2) + 1] = "+"
                 if currentFloorLayout[x][y].eastConnection == True:
                     graphicalFloorLayout[((x - 1) * 2) + 2][((y - 1) * 2) + 1] = "-"
+                if currentFloorLayout[x][y].westConnection == True:
+                    graphicalFloorLayout[((x - 1) * 2)][((y - 1) * 2) + 1] = "-"
                 if currentFloorLayout[x][y].southConnection == True:
                     graphicalFloorLayout[((x - 1) * 2) + 1][((y - 1) * 2) + 2] = "|"
+                if currentFloorLayout[x][y].northConnection == True:
+                    graphicalFloorLayout[((x - 1) * 2) + 1][((y - 1) * 2)] = "|"
 
     for y in range (15):
         line = ""
@@ -258,4 +265,3 @@ def deleteRoomType():
     global possibleRooms, i, deletedRooms, roomDeleted #Values used to delete a room type
     possibleRooms.pop(i - deletedRooms)                #Removes the room from the list of possible rooms
     deletedRooms += 1                                  #Increases the count of rooms that have been deleted
-    roomDeleted = True                                 #Identifies that a room has been deleted in this pass of the conditions
