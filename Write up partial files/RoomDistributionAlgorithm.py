@@ -94,6 +94,7 @@ def NewFloor(floorSize = "large"):
                     #Makes sure the placed room will have a door above and below it so there is a path from the entrance to the exit no matter how the other rooms are placed
                     if possibleRooms[i - deletedRooms][0] == "0" or possibleRooms[i - deletedRooms][2] == "0": 
                         deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                        continue         #Skips to the next iteration of the for loop
                         
                 #For when the exit is placed in a horizontal line with the entrance
                 else:
@@ -101,10 +102,10 @@ def NewFloor(floorSize = "large"):
                     #Makes sure the placed room will have a door to the left and right of it so there is a path from the entrance to the exit no matter how the other rooms are placed
                     if possibleRooms[i - deletedRooms][1] == "0" or possibleRooms[i - deletedRooms][3] == "0":
                         deleteRoomType() #Deletes the room type from the list if it doesn't fit the conditions
+                        continue         #Skips to the next iteration of the for loop
 
 
 def deleteRoomType():
     global possibleRooms, i, deletedRooms #Values used to delete a room type
     possibleRooms.pop(i - deletedRooms)   #Removes the room from the list of possible rooms
     deletedRooms += 1                     #Increases the count of rooms that have been deleted
-    continue                              #Skips to the next iteration of the for loop
