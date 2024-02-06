@@ -17,6 +17,9 @@ pygame.display.set_caption("Journey To The Core")
 running = True #Used to determine if the user has quit the program or not
 count = 0      #Used to stall the dwarf's animation
 
+currentFloorLayout = NewFloor("Large")  #Creates a 2D array room layout using the imported module
+showFloorLayout(currentFloorLayout)     #Calls the procedure to print the floor layout in the python shell
+currentRoomLocation = [4,4]             #Determines which room in the floor the player is in, which always starts as the middle
 dwarf = Dwarf("Assets/SpriteSheet.png") #Initialises the dwarf object
 
 #Starts the main game loop
@@ -38,12 +41,30 @@ while running:
     #Fills in the screen with black 
     screen.fill((0,0,0))
 
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format("1101"),scale) #Makes a tile map object of the type of room the player is currently in
-    currentRoomTiles = currentRoomMap.loadTileMap()                                               #Makes the tile map for the tile map object
-    currentRoomMap.draw(currentRoomTiles,screen)                                                  #Draws the room to the screen
+    #Moves the character to the next room if they go through the door to that room
+    if dwarf.x <= 0:
+        currentRoomLocation[0] -= 1
+        dwarf.x = 400 - dwarf.width - 20
 
-    dwarf.updatePosition("1101")   #Updates the position of the dwarf character on the screen
-    dwarf.draw(screen,count,scale) #Draws the dwarf character onto the screen
+    if dwarf.x + dwarf.width >= 400:
+        currentRoomLocation[0] += 1
+        dwarf.x = 0 + 20
+
+    if dwarf.y <= 0:
+        currentRoomLocation[1] -= 1
+        dwarf.y = 400 - dwarf.height - 20
+
+    if dwarf.y + dwarf.height >= 400:
+        currentRoomLocation[1] += 1
+        dwarf.y = 0 + 20
+
+    currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
+    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map object of the type of room the player is currently in
+    currentRoomTiles = currentRoomMap.loadTileMap()                                                                 #Makes the tile map for the tile map object
+    currentRoomMap.draw(currentRoomTiles,screen)                                                                    #Draws the room to the screen
+
+    dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID) #Updates the position of the dwarf character on the screen
+    dwarf.draw(screen,count,scale)                                                                  #Draws the dwarf character onto the screen
     
     #Updates the screen's graphics
     pygame.display.update() 
