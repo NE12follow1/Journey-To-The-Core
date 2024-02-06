@@ -11,13 +11,19 @@ pygame.init()
 clock = pygame.time.Clock()
 
 #Creates a pygame screen abd gives it a caption
-screen = pygame.display.set_mode((400,400))
+screen = pygame.display.set_mode((400 * scale,400 * scale))
 pygame.display.set_caption("Journey To The Core")
 
 running = True #Used to determine if the user has quit the program or not
+count = 0      #Used to stall the dwarf's animation
+
+dwarf = Dwarf("Assets/SpriteSheet.png") #Initialises the dwarf object
 
 #Starts the main game loop
 while running:
+    #Resets count once it reaches a value of 8
+    if count == 8:
+        count = 0
 
     #Checks if the user presses the escape key to quit the game
     for event in pygame.event.get():
@@ -32,12 +38,16 @@ while running:
     #Fills in the screen with black 
     screen.fill((0,0,0))
 
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format("1101")) #Makes a tile map object of the type of room the player is currently in
-    currentRoomTiles = currentRoomMap.loadTileMap()                                         #Makes the tile map for the tile map object
-    currentRoomMap.draw(currentRoomTiles,screen)                                            #Draws the room to the screen
+    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format("1101"),scale) #Makes a tile map object of the type of room the player is currently in
+    currentRoomTiles = currentRoomMap.loadTileMap()                                               #Makes the tile map for the tile map object
+    currentRoomMap.draw(currentRoomTiles,screen)                                                  #Draws the room to the screen
+
+    dwarf.updatePosition("1101")   #Updates the position of the dwarf character on the screen
+    dwarf.draw(screen,count,scale) #Draws the dwarf character onto the screen
     
     #Updates the screen's graphics
     pygame.display.update() 
 
     #Used to set the game to the fps found in the settings file
     clock.tick(fps)
+    count += 1
