@@ -18,7 +18,7 @@ running = True #Used to determine if the user has quit the program or not
 count = 0      #Used to stall the dwarf's animation
 
 currentFloorLayout = NewFloor("Large")  #Creates a 2D array room layout using the imported module
-showFloorLayout(currentFloorLayout)     #Calls the procedure to print the floor layout in the python shell
+ShowFloorLayout(currentFloorLayout)     #Calls the procedure to print the floor layout in the python shell
 currentRoomLocation = [4,4]             #Determines which room in the floor the player is in, which always starts as the middle
 dwarf = Dwarf("Assets/SpriteSheet.png") #Initialises the dwarf object
 
