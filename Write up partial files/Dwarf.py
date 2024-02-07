@@ -135,5 +135,7 @@ class Dwarf(pygame.sprite.Sprite):
 
         #Takes the current frame of the dwarf from the sprite sheet
         self.image = self.spriteSheet.subsurface(Rect(self.frame * self.width + self.buffer, self.state * self.height + self.buffer, self.width, self.height))
-        self.location = (self.x, self.y)      #Makes a tuple that determines the dwarf's location on the screen
-        screen.blit(self.image,self.location) #Draws the dwarf onto the screen at the given location
+        self.imageSize = (self.width * scale, self.height * scale)      #Makes a tuple that determines how large the dwarf image is supposed to be when scaled up
+        self.image = pygame.transform.scale(self.image, self.imageSize) #Scales the dwarf to the screen
+        self.location = (self.x * scale, self.y * scale)                #Makes a tuple that determines the dwarf's location on the screen
+        screen.blit(self.image,self.location)                           #Draws the dwarf onto the screen at the given location
