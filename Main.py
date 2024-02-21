@@ -22,6 +22,10 @@ ShowFloorLayout(currentFloorLayout)     #Calls the procedure to print the floor 
 currentRoomLocation = [4,4]             #Determines which room in the floor the player is in, which always starts as the middle
 dwarf = Dwarf("Assets/SpriteSheet.png") #Initialises the dwarf object
 
+currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
+currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map object of the type of room the player is currently in
+currentRoomMap.loadTileMap()                                                                                    #Makes the tile map for the tile map object
+
 #Starts the main game loop
 while running:
     #Resets count once it reaches a value of 8
@@ -41,27 +45,35 @@ while running:
     #Fills in the screen with black 
     screen.fill((0,0,0))
 
+    reloadRoom = False
+
     #Moves the character to the next room if they go through the door to that room
     if dwarf.x <= 0:
         currentRoomLocation[0] -= 1
         dwarf.x = 400 - dwarf.width - 20
+        reloadRoom = True
 
     if dwarf.x + dwarf.width >= 400:
         currentRoomLocation[0] += 1
         dwarf.x = 0 + 20
+        reloadRoom = True
 
     if dwarf.y <= 0:
         currentRoomLocation[1] -= 1
         dwarf.y = 400 - dwarf.height - 20
+        reloadRoom = True
 
     if dwarf.y + dwarf.height >= 400:
         currentRoomLocation[1] += 1
         dwarf.y = 0 + 20
+        reloadRoom = True
 
-    currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
-    currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map object of the type of room the player is currently in
-    currentRoomTiles = currentRoomMap.loadTileMap()                                                                 #Makes the tile map for the tile map object
-    currentRoomMap.draw(currentRoomTiles,screen)                                                                    #Draws the room to the screen
+    if reloadRoom == True:
+        currentRoomObject = currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]]                          #Gets the room object of the room the player is currently in
+        currentRoomMap = TileMap("Assets/TileSpriteSheet.png","RoomMaps/{}.txt".format(currentRoomObject.roomID),scale) #Makes a tile map object of the type of room the player is currently in
+        currentRoomMap.loadTileMap()                                                                                    #Makes the tile map for the tile map object
+
+    currentRoomMap.draw(screen) #Draws the room to the screen
 
     dwarf.updatePosition(currentFloorLayout[currentRoomLocation[0]][currentRoomLocation[1]].roomID) #Updates the position of the dwarf character on the screen
     dwarf.draw(screen,count,scale)                                                                  #Draws the dwarf character onto the screen
