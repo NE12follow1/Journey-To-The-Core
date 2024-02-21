@@ -1,4 +1,5 @@
-import pygame #Used for displaying the game
+import pygame          #Used for displaying the game
+from Settings import * #A separate python file that holds many constants to do with pygame
 
 #A class to make tile maps for the rooms and draw them on the screen
 class TileMap(pygame.sprite.Sprite):
@@ -67,11 +68,20 @@ class TileMap(pygame.sprite.Sprite):
                 if line[y] == "K":
                     tileMap[x][y] = (3 * self.tileSize,3 * self.tileSize,self.tileSize,self.tileSize)
 
-        return tileMap #Returns the finished tile map
+        self.roomImage = pygame.Surface((4 * self.tileSize,4 * self.tileSize)) #Creates a new surface to store the room's finished image
 
-    #A function that draws the tiles onto the defined screen using the tile map and loaded sprite sheet
-    def draw(self, tileMap, screen):
+        #Draws the tiles onto the surface using the tile map and loaded sprite sheet
         for x in range(4):
             for y in range(4):
                 location = (y * self.tileSize, x * self.tileSize)
-                screen.blit(self.tiles, location, tileMap[x][y])
+                self.roomImage.blit(self.tiles, location, tileMap[x][y])
+
+    #A function that draws the room image onto the screen
+    def draw(self, screen):
+        screen.blit(self.roomImage, (0,0))
+
+
+
+
+
+
