@@ -1,18 +1,20 @@
 import pygame          #Used for displaying the game
 from Settings import * #A separate python file that holds many constants to do with pygame
+from ExitHole import * #A separate python file that holds the class for the exit hole
 
 #A class to make tile maps for the rooms and draw them on the screen
 class TileMap(pygame.sprite.Sprite):
-    def __init__(self, roomSpriteSheet, tileMap, scale):                      #Initialising function that is ran when a new TileMap object is made
+    def __init__(self, roomSpriteSheet, tileMap, scale, roomObject):          #Initialising function that is ran when a new TileMap object is made
         super().__init__()                                                    #Takes initialisation information for pygame sprie objects
         self.file = open(tileMap, mode = "r")                                 #Opens the .txt file that maps out the tile locations for the room being displayed on the screen
         self.tiles = pygame.image.load(roomSpriteSheet)                       #Loads the sprite sheet image that is used to make the rooms
         self.tileSize = 100 * scale                                           #Defines the size of each square tile in each direction
         self.spriteSheetSize = (6 * self.tileSize, 4 * self.tileSize)         #Defines the size of the sprite sheet with the tiles on it
         self.tiles = pygame.transform.scale(self.tiles, self.spriteSheetSize) #Scales the sprite sheet up or down to the user's needs
+        self.roomObject = roomObject                                          #Holds the room that is being created
         
     #A function that makes a 2D Array for the tile map
-    def loadTileMap(self):
+    def loadTileMap(self,isExitRoom):
 
         #Makes a 4x4 2D Array for the tile map
         tileMap = []
@@ -68,6 +70,29 @@ class TileMap(pygame.sprite.Sprite):
                 if line[y] == "K":
                     tileMap[x][y] = (3 * self.tileSize,3 * self.tileSize,self.tileSize,self.tileSize)
 
+                #Checks if there is a box in the room
+                if self.roomObject.boxPresent[0] == True:
+                    #Changes the tiles to the open box ones if the box is open
+                    if self.roomObject.boxPresent[1] == True:
+                        if x == 1 and y == 1:
+                            tileMap[x][y] = (2 * self.tileSize,0 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 1 and y == 2:
+                            tileMap[x][y] = (3 * self.tileSize,0 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 2 and y == 1:
+                            tileMap[x][y] = (2 * self.tileSize,1 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 2 and y == 2:
+                            tileMap[x][y] = (3 * self.tileSize,1 * self.tileSize,self.tileSize,self.tileSize)
+                    #Changes the tiles to the closed box ones if the box is closed
+                    else:
+                        if x == 1 and y == 1:
+                            tileMap[x][y] = (4 * self.tileSize,0 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 1 and y == 2:
+                            tileMap[x][y] = (5 * self.tileSize,0 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 2 and y == 1:
+                            tileMap[x][y] = (4 * self.tileSize,1 * self.tileSize,self.tileSize,self.tileSize)
+                        elif x == 2 and y == 2:
+                            tileMap[x][y] = (5 * self.tileSize,1 * self.tileSize,self.tileSize,self.tileSize)
+
         self.roomImage = pygame.Surface((4 * self.tileSize,4 * self.tileSize)) #Creates a new surface to store the room's finished image
 
         #Draws the tiles onto the surface using the tile map and loaded sprite sheet
@@ -76,12 +101,11 @@ class TileMap(pygame.sprite.Sprite):
                 location = (y * self.tileSize, x * self.tileSize)
                 self.roomImage.blit(self.tiles, location, tileMap[x][y])
 
+        #Draws the exit hole if the current room is the exit room
+        if isExitRoom == True:
+            hole = ExitHole("Assets/MiscellaneousGraphics.png")
+            hole.draw(self.roomImage,self.tileSize / 100)
+
     #A function that draws the room image onto the screen
     def draw(self, screen):
         screen.blit(self.roomImage, (0,0))
-
-
-
-
-
-
