@@ -1,8 +1,9 @@
-from Room import * #A separate python file that holds the room class
-import random      #Used for anything that requires randomness
-import copy        #Used to make copies of lists and arrays that are completely separate from the original 
+from Room import *      #A separate python file that holds the room class
+import random           #Used for anything that requires randomness
+import copy             #Used to make copies of lists and arrays that are completely separate from the original
+from Monster import *   #Used to create monster objects that are added to the rooms
 
-def NewFloor(floorSize = "large"):
+def NewFloor(floorSize = "large",floorNum = 1,possibleBehaviours = ["cautious"]):
     global possibleRooms, i, deletedRooms #Values used to delete a room type
 
     #Handles the 8 different floor sizes and what each means to the total number of rooms
@@ -32,16 +33,16 @@ def NewFloor(floorSize = "large"):
     #Defines where and what the exit room is due to which side was chosen
     if exitRoomType == 1:
         exitRoom = [4,1]
-        exitRoomObject = Room("0010")
+        exitRoomObject = Room("0010",isExitRoom = True)
     elif exitRoomType == 2:
         exitRoom = [7,4]
-        exitRoomObject = Room("0001")
+        exitRoomObject = Room("0001",isExitRoom = True)
     elif exitRoomType == 3:
         exitRoom = [4,7]
-        exitRoomObject = Room("1000")
+        exitRoomObject = Room("1000",isExitRoom = True)
     else:
         exitRoom = [1,4]
-        exitRoomObject = Room("0100")
+        exitRoomObject = Room("0100",isExitRoom = True)
 
     #Creates the 2D array that the floor layout and all the room objects will be stored inside
     currentFloorLayout = [[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]]
@@ -226,16 +227,87 @@ def NewFloor(floorSize = "large"):
             if newPossibleLocations[i] not in availableLocations:
                 availableLocations.append(newPossibleLocations[i])
 
-        newRoom = Room(chosenRoomType)
+        #Places a monster in the room next to the exit room
+        if remainingRooms == totalRooms - 2:
+            enemyPresent = True
+            behaviour = random.choice(possibleBehaviours)
+            enemyObject = Monster("Assets/EnemySpriteSheet.png",behaviour,floorNum)
 
-        currentFloorLayout[workingLocation[0]][workingLocation[1]] = newRoom
+        #All other rooms have no monster or box
+        else:
+            enemyPresent = False
+            enemyObject = ""
+        
+        newRoom = Room(chosenRoomType,enemyPresent,enemyObject) #The room object is created
 
+        currentFloorLayout[workingLocation[0]][workingLocation[1]] = newRoom #The room is added to the floor at the location
+
+        #Removes the room's location from the list of available locations
         for i in range(len(availableLocations)):
             if availableLocations[i] == workingLocation:
                 availableLocations.pop(i)
                 break
 
-        remainingRooms -= 1
+        remainingRooms -= 1 #A room has been placed, so there is one less left to place
+
+    #Counts how many rooms are on the floor
+    totalRooms = 0
+    for y in range(9):
+        for x in range(9):
+            if currentFloorLayout[x][y] != 0 and currentFloorLayout[x][y] != 1:
+                totalRooms += 1
+
+    #Calculates how many monsters and boxes need to be added to the floor
+    enemiesToPlace = ((totalRooms / 5) * 2) - 1
+    boxesToPlace = (totalRooms / 5) * 2
+
+    #Runs while there are monsters or boxes left to place, and there are rooms without either left
+    while (enemiesToPlace != 0 or boxesToPlace != 0) and totalRooms != 0:
+        
+        location = [random.randint(1,7),random.randint(1,7)] #Selects a random location on the floor
+
+        #If the location is a room object
+        if currentFloorLayout[location[0]][location[1]] != 0 and currentFloorLayout[location[0]][location[1]] != 1:
+            #If there are both monsters and boxes left to be placed
+            if enemiesToPlace > 0 and boxesToPlace > 0:
+                #If the room is not the entrance or exit and doesn't have a box or monster in it already
+                if location != exitRoom and location != entranceRoom and currentFloorLayout[location[0]][location[1]].enemyPresent[0] == False and currentFloorLayout[location[0]][location[1]].boxPresent[0] == False:
+
+                    typeToPlace = random.randint(1,2) #Randomly selects a box or monster to be placed
+
+                    #Places a box in the room
+                    if typeToPlace == 1:
+                        currentFloorLayout[location[0]][location[1]].boxPresent[0] = True
+                        boxesToPlace -= 1
+
+                    #Places a monster in the room
+                    else:
+                        currentFloorLayout[location[0]][location[1]].enemyPresent[0] = True
+                        behaviour = random.choice(possibleBehaviours)
+                        enemyObject = Monster("Assets/EnemySpriteSheet.png",behaviour,floorNum)
+                        currentFloorLayout[location[0]][location[1]].enemyPresent = [True,enemyObject]
+                        enemiesToPlace -= 1
+
+            #If there are only boxes left to be placed
+            elif enemiesToPlace == 0:
+                #If the room is not the entrance or exit and doesn't have a box or monster in it already
+                if location != exitRoom and location != entranceRoom and currentFloorLayout[location[0]][location[1]].enemyPresent[0] == False and currentFloorLayout[location[0]][location[1]].boxPresent[0] == False:        
+                    #Places a box in the room
+                    currentFloorLayout[location[0]][location[1]].boxPresent[0] = True
+                    boxesToPlace -= 1
+
+            #If there are only monsters left to be placed
+            else:
+                #If the room is not the entrance or exit and doesn't have a box or monster in it already
+                if location != exitRoom and location != entranceRoom and currentFloorLayout[location[0]][location[1]].enemyPresent[0] == False and currentFloorLayout[location[0]][location[1]].boxPresent[0] == False:
+                    #Places a monster in the room
+                    currentFloorLayout[location[0]][location[1]].enemyPresent[0] = True
+                    behaviour = random.choice(possibleBehaviours)
+                    enemyObject = Monster("Assets/EnemySpriteSheet.png",behaviour,floorNum)
+                    currentFloorLayout[location[0]][location[1]].enemyPresent = [True,enemyObject]
+                    enemiesToPlace -= 1
+
+            totalRooms -= 1 #Since a box or monster has been placed, the number of rooms left that can have something placed in them goes down by 1
     
     #Returns the finished 2D array of the floor layout and room objects
     return currentFloorLayout
